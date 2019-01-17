@@ -12,8 +12,8 @@ const socket = io(window.location.origin, {
   path: `${trim(socketBase)}/socket.io`,
 });
 
-const FILE_BEGIN = '^[[5i\r\n';
-const FILE_END = '\r\n^[[4i\r\n';
+const FILE_BEGIN = '\u001b[5i';
+const FILE_END = '\u001b[4i';
 
 socket.on('connect', () => {
   const term = new Terminal();
