@@ -17,7 +17,7 @@ const FILE_END = '\u001b[4i';
 
 socket.on('connect', () => {
   const term = new Terminal();
-  let pdfBuffer = [];
+  let fileBuffer = [];
   term.open(document.getElementById('terminal'));
   term.setOption('fontSize', 14);
   document.getElementById('overlay').style.display = 'none';
@@ -49,7 +49,7 @@ socket.on('connect', () => {
   }
 
   function onCompleteFile() {
-    let bufferCharacters = pdfBuffer.join('');
+    let bufferCharacters = fileBuffer.join('');
     bufferCharacters = bufferCharacters.substring(
       bufferCharacters.lastIndexOf(FILE_BEGIN) + FILE_BEGIN.length,
       bufferCharacters.lastIndexOf(FILE_END)
@@ -73,7 +73,7 @@ socket.on('connect', () => {
 
     window.open(blobUrl);
 
-    pdfBuffer = [];
+    fileBuffer = [];
   }
 
   term.on('data', data => {
@@ -89,21 +89,21 @@ socket.on('connect', () => {
 
       // If we've got the entire file in one chunk
       if (indexOfFileBegin !== -1 && indexOfFileEnd !== -1) {
-        pdfBuffer.push(data);
+        fileBuffer.push(data);
         onCompleteFile();
       }
       // If we've found a beginning marker
       else if (indexOfFileBegin !== -1) {
-        pdfBuffer.push(data);
+        fileBuffer.push(data);
       }
       // If we've found an ending marker
       else if (indexOfFileEnd !== -1) {
-        pdfBuffer.push(data);
+        fileBuffer.push(data);
         onCompleteFile();
       }
       // If we've found the continuation of a file
-      else if (pdfBuffer.length > 0) {
-        pdfBuffer.push(data);
+      else if (fileBuffer.length > 0) {
+        fileBuffer.push(data);
       }
       // Just treat it as normal data
       else {
