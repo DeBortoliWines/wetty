@@ -1,6 +1,7 @@
 import { Terminal } from 'xterm';
 import { isUndefined } from 'lodash';
 import * as io from 'socket.io-client';
+import * as fileType from 'file-type';
 import { fit } from 'xterm/lib/addons/fit/fit';
 import './wetty.scss';
 import './favicon.ico';
@@ -66,7 +67,8 @@ socket.on('connect', () => {
     }
 
     let mimeType = 'application/octet-stream';
-    if (bufferCharacters.indexOf('%PDF') === 0) mimeType = 'application/pdf';
+    let typeData = fileType(bytes);
+    if (typeData) mimeType = typeData.mime;
 
     const blob = new Blob([new Uint8Array(bytes.buffer)], { type: mimeType });
     const blobUrl = URL.createObjectURL(blob);
