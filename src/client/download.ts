@@ -1,11 +1,40 @@
 import * as fileType from 'file-type';
 import Toastify from 'toastify-js';
 
-export const FILE_BEGIN = '\u001b[5i';
-export const FILE_END = '\u001b[4i';
-export let fileBuffer = [];
+const FILE_BEGIN = '\u001b[5i';
+const FILE_END = '\u001b[4i';
+let fileBuffer: string[] = [];
 
-export function onCompleteFile() {
+export function processFile(data: string) {
+  const indexOfFileBegin = data.indexOf(FILE_BEGIN);
+  const indexOfFileEnd = data.indexOf(FILE_END);
+
+  // If we've got the entire file in one chunk
+  if (indexOfFileBegin !== -1 && indexOfFileEnd !== -1) {
+    fileBuffer.push(data);
+    onCompleteFile();
+  }
+  // If we've found a beginning marker
+  else if (indexOfFileBegin !== -1) {
+    fileBuffer.push(data);
+  }
+  // If we've found an ending marker
+  else if (indexOfFileEnd !== -1) {
+    fileBuffer.push(data);
+    onCompleteFile();
+  }
+  // If we've found the continuation of a file
+  else if (fileBuffer.length > 0) {
+    fileBuffer.push(data);
+  }
+  // We don't have a file...
+  else {
+    return false;
+  }
+  return true;
+}
+
+function onCompleteFile() {
   let bufferCharacters = fileBuffer.join('');
   bufferCharacters = bufferCharacters.substring(
     bufferCharacters.lastIndexOf(FILE_BEGIN) + FILE_BEGIN.length,

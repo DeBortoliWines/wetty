@@ -5,7 +5,7 @@ import { library, dom } from "@fortawesome/fontawesome-svg-core";
 import { faCogs } from "@fortawesome/free-solid-svg-icons/faCogs";
 import { socket } from './socket';
 import { overlay, terminal } from './elements';
-import { fileBuffer, onCompleteFile, FILE_BEGIN, FILE_END } from './download';
+import { processFile } from './download';
 import verifyPrompt from './verify';
 import disconnect from './disconnect';
 import mobileKeyboard from './mobile';
@@ -84,29 +84,7 @@ socket.on('connect', () => {
   });
   socket
     .on('data', (data: string) => {
-      const indexOfFileBegin = data.indexOf(FILE_BEGIN);
-      const indexOfFileEnd = data.indexOf(FILE_END);
-
-      // If we've got the entire file in one chunk
-      if (indexOfFileBegin !== -1 && indexOfFileEnd !== -1) {
-        fileBuffer.push(data);
-        onCompleteFile();
-      }
-      // If we've found a beginning marker
-      else if (indexOfFileBegin !== -1) {
-        fileBuffer.push(data);
-      }
-      // If we've found an ending marker
-      else if (indexOfFileEnd !== -1) {
-        fileBuffer.push(data);
-        onCompleteFile();
-      }
-      // If we've found the continuation of a file
-      else if (fileBuffer.length > 0) {
-        fileBuffer.push(data);
-      }
-      // Just treat it as normal data
-      else {
+      if (!processFile(data)) {
         term.write(data);
       }
     })
