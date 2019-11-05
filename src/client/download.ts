@@ -22,38 +22,41 @@ export class FileDownloader {
   buffer(data: string) {
     const indexOfFileBegin = data.indexOf(this.file_begin);
     const indexOfFileEnd = data.indexOf(this.file_end);
-    let remainingCharacters = ''
+    let remainingCharacters = '';
 
     // If we've got the entire file in one chunk
     if (indexOfFileBegin !== -1 && indexOfFileEnd !== -1) {
       let bufferCharacters = data.substring(
-        data.lastIndexOf(this.file_begin) +
-          this.file_begin.length,
-        data.lastIndexOf(this.file_end)
+        indexOfFileBegin + this.file_begin.length,
+        indexOfFileEnd
       );
       remainingCharacters = data.replace(
-        data,
-        this.file_begin + bufferCharacters + this.file_end
+        this.file_begin + bufferCharacters + this.file_end,
+        ''
       );
-      this.fileBuffer.push(data);
+      this.fileBuffer.push(bufferCharacters);
       this.onCompleteFile();
     }
     // If we've found a beginning marker
-    else if (indexOfFileBegin !== -1) {
-      let bufferCharacters = data.substring(
-        data.lastIndexOf(this.file_begin) + this.file_begin.length
-      );
-      this.fileBuffer.push(data);
-    }
-    // If we've found an ending marker
-    else if (indexOfFileEnd !== -1) {
-      this.fileBuffer.push(data);
-      this.onCompleteFile();
-    }
+    // else if (indexOfFileBegin !== -1) {
+    //   let bufferCharacters = data.substring(
+    //     data.lastIndexOf(this.file_begin) + this.file_begin.length
+    //   );
+    //   remainingCharacters = data.replace(
+    //     this.file_begin + bufferCharacters,
+    //     ''
+    //   );
+    //   this.fileBuffer.push(bufferCharacters);
+    // }
+    // // If we've found an ending marker
+    // else if (indexOfFileEnd !== -1) {
+    //   this.fileBuffer.push(data);
+    //   this.onCompleteFile();
+    // }
     // If we've found the continuation of a file
-    else if (this.fileBuffer.length > 0) {
-      this.fileBuffer.push(data);
-    }
+    // else if (this.fileBuffer.length > 0) {
+    //   this.fileBuffer.push(data);
+    // }
     // We don't have a file...
     return remainingCharacters;
   }

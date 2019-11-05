@@ -25,21 +25,33 @@ describe('FileDownloader', () => {
     expect(fileDownloader.file_end).to.equal(FILE_END);
   });
 
-  it('should return data around file markers', () => {
-    const mockFile = FILE_BEGIN + window.atob('test string') + FILE_END;
-    
+  it('should return data before file markers', () => {
+    const mockFile = FILE_BEGIN + 'test string' + FILE_END;
+
     let onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-    expect(fileDownloader.buffer('SOME RANDOM DATA' + mockFile)).to.equal('SOME RANDOM DATA')
+    expect(fileDownloader.buffer('DATA AT THE LEFT' + mockFile)).to.equal(
+      'DATA AT THE LEFT'
+    );
     expect(onCompleteFileStub.calledOnce).to.be.true;
+  });
 
-    // fileDownloader = new FileDownloader(FILE_BEGIN, FILE_END);
-    // expect(fileDownloader.buffer(mockFile + 'DATA AT THE END')).to.equal('DATA AT THE END');
+  it('should return data after file markers', () => {
+    const mockFile = FILE_BEGIN + 'test string' + FILE_END;
 
-    // fileDownloader = new FileDownloader(FILE_BEGIN, FILE_END);
-    // expect(
-    //   fileDownloader.buffer(
-    //     'DATA AT THE BEGINNING' + mockFile + 'DATA AT THE END'
-    //   )
-    // ).to.equal('DATA AT THE BEGINNINGDATA AT THE END');
+    let onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(fileDownloader.buffer(mockFile + 'DATA AT THE RIGHT')).to.equal(
+      'DATA AT THE RIGHT'
+    );
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+  });
+
+  it('should return data before and after file markers', () => {
+    const mockFile = FILE_BEGIN + 'test string' + FILE_END;
+
+    let onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(
+      fileDownloader.buffer('DATA AT THE LEFT' + mockFile + 'DATA AT THE RIGHT')
+    ).to.equal('DATA AT THE LEFTDATA AT THE RIGHT');
+    expect(onCompleteFileStub.calledOnce).to.be.true;
   });
 });
