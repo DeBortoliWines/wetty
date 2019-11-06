@@ -1,15 +1,19 @@
 import * as fileType from 'file-type';
 // import Toastify from 'toastify-js';
 
-const DEFAULT_FILE_BEGIN: string = '\u001b[5i';
-const DEFAULT_FILE_END: string = '\u001b[4i';
-let fileBuffer: string[] = [];
+const DEFAULT_FILE_BEGIN = '\u001b[5i';
+const DEFAULT_FILE_END = '\u001b[4i';
+const fileBuffer: string[] = [];
 
 export class FileDownloader {
   fileBuffer: string[];
+
   file_begin: string;
+
   file_end: string;
+
   partial_file_begin: string;
+
   partial_file_end: string;
 
   constructor(
@@ -26,36 +30,36 @@ export class FileDownloader {
   buffer(data: string): string {
     let remainingCharacters = data;
     if (this.partial_file_begin !== '') {
-      let nextExpectedCharacter = this.file_begin[
+      const nextExpectedCharacter = this.file_begin[
         this.partial_file_begin.length
       ];
       // Have we found more of the file_begin marker?
       if (data.substr(0, 1) === nextExpectedCharacter) {
         this.partial_file_begin += nextExpectedCharacter;
-        let newData = data.substr(1);
+        const newData = data.substr(1);
         if (this.partial_file_begin === this.file_begin) {
           this.partial_file_begin = '';
           // return all the data as if it wasn't split across different buffer calls
           return this.buffer(this.file_begin + newData);
-        } else {
+        } 
           // We found the next expected character but we still haven't got the completed file_begin sequence
           return newData ? this.buffer(newData) : '';
-        }
+        
       }
       // The next expected character wasn't part of the marker, it was a false positive
       // return all the data as if it wasn't split across different buffer calls
-      else {
-        let newData = this.partial_file_begin + data;
+      
+        const newData = this.partial_file_begin + data;
         this.partial_file_begin = '';
         return this.buffer(newData);
-      }
-    } else {
+      
+    } 
       const indexOfFileBegin = data.indexOf(this.file_begin);
       const indexOfFileEnd = data.indexOf(this.file_end);
 
       // If we've got the entire file in one chunk
       if (indexOfFileBegin !== -1 && indexOfFileEnd !== -1) {
-        let bufferCharacters = data.substring(
+        const bufferCharacters = data.substring(
           indexOfFileBegin + this.file_begin.length,
           indexOfFileEnd
         );
@@ -69,7 +73,7 @@ export class FileDownloader {
 
       // If we've found a beginning marker
       else if (indexOfFileBegin !== -1) {
-        let bufferCharacters = data.substring(
+        const bufferCharacters = data.substring(
           indexOfFileBegin + this.file_begin.length
         );
         remainingCharacters = data.replace(
@@ -81,7 +85,7 @@ export class FileDownloader {
 
       // If we've found an ending marker
       else if (indexOfFileEnd !== -1) {
-        let bufferCharacters = data.substring(0, indexOfFileEnd);
+        const bufferCharacters = data.substring(0, indexOfFileEnd);
         remainingCharacters = data.replace(
           bufferCharacters + this.file_end,
           ''
@@ -106,7 +110,7 @@ export class FileDownloader {
           }
         }
       }
-    }
+    
 
     // This is where it gets tricky...
     return remainingCharacters;
