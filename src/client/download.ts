@@ -26,7 +26,6 @@ export class FileDownloader {
 
   buffer(data: string): string {
     let remainingCharacters = data;
-    let checkForMultipleFiles = false;
     if (this.partial_file_begin !== '') {
       const nextExpectedCharacter = this.file_begin[
         this.partial_file_begin.length
@@ -65,7 +64,8 @@ export class FileDownloader {
       );
       this.fileBuffer.push(bufferCharacters);
       this.onCompleteFile(this.fileBuffer.join(''));
-      checkForMultipleFiles = true;
+      this.fileBuffer = [];
+      return this.buffer(remainingCharacters);
     }
 
     // If we've found a beginning marker
@@ -86,7 +86,8 @@ export class FileDownloader {
       remainingCharacters = data.replace(bufferCharacters + this.file_end, '');
       this.fileBuffer.push(bufferCharacters);
       this.onCompleteFile(this.fileBuffer.join(''));
-      checkForMultipleFiles = true;
+      this.fileBuffer = [];
+      // return this.buffer(remainingCharacters);
     }
 
     // If we're in the middle of buffering a file...
@@ -102,7 +103,8 @@ export class FileDownloader {
         this.onCompleteFile(
           this.fileBuffer.join('').substr(0, potentialFileEndIndexOf)
         );
-        checkForMultipleFiles = true;
+        this.fileBuffer = [];
+        return this.buffer(remainingCharacters);
       } else {
         remainingCharacters = '';
         this.fileBuffer.push(data);
@@ -120,9 +122,6 @@ export class FileDownloader {
         }
       }
     }
-
-    if (checkForMultipleFiles) return this.buffer(remainingCharacters);
-    return remainingCharacters;
 
     return remainingCharacters;
   }

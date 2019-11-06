@@ -20,150 +20,150 @@ describe('FileDownloader', () => {
     sinon.restore();
   });
 
-  //   it('should set begin and end strings', () => {
-  //     expect(fileDownloader.file_begin).to.equal(FILE_BEGIN);
-  //     expect(fileDownloader.file_end).to.equal(FILE_END);
-  //   });
+  it('should set begin and end strings', () => {
+    expect(fileDownloader.file_begin).to.equal(FILE_BEGIN);
+    expect(fileDownloader.file_end).to.equal(FILE_END);
+  });
 
-  //   it('should return data before file markers', () => {
-  //     const mockFile = `${FILE_BEGIN}test string${FILE_END}`;
+  it('should return data before file markers', () => {
+    const mockFile = `${FILE_BEGIN}test string${FILE_END}`;
 
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-  //     expect(fileDownloader.buffer(`DATA AT THE LEFT${mockFile}`)).to.equal(
-  //       'DATA AT THE LEFT'
-  //     );
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //   });
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(fileDownloader.buffer(`DATA AT THE LEFT${mockFile}`)).to.equal(
+      'DATA AT THE LEFT'
+    );
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+  });
 
-  //   it('should return data after file markers', () => {
-  //     const mockFile = `${FILE_BEGIN}test string${FILE_END}`;
+  it('should return data after file markers', () => {
+    const mockFile = `${FILE_BEGIN}test string${FILE_END}`;
 
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-  //     expect(fileDownloader.buffer(`${mockFile}DATA AT THE RIGHT`)).to.equal(
-  //       'DATA AT THE RIGHT'
-  //     );
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //   });
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(fileDownloader.buffer(`${mockFile}DATA AT THE RIGHT`)).to.equal(
+      'DATA AT THE RIGHT'
+    );
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+  });
 
-  //   it('should return data before and after file markers', () => {
-  //     const mockFile = `${FILE_BEGIN}test string${FILE_END}`;
+  it('should return data before and after file markers', () => {
+    const mockFile = `${FILE_BEGIN}test string${FILE_END}`;
 
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-  //     expect(
-  //       fileDownloader.buffer(`DATA AT THE LEFT${mockFile}DATA AT THE RIGHT`)
-  //     ).to.equal('DATA AT THE LEFTDATA AT THE RIGHT');
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //   });
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(
+      fileDownloader.buffer(`DATA AT THE LEFT${mockFile}DATA AT THE RIGHT`)
+    ).to.equal('DATA AT THE LEFTDATA AT THE RIGHT');
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+  });
 
-  //   it('should return data before a beginning marker found', () => {
-  //     const mockFile = `${FILE_BEGIN}test string`;
+  it('should return data before a beginning marker found', () => {
+    const mockFile = `${FILE_BEGIN}test string`;
 
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-  //     expect(fileDownloader.buffer(`DATA AT THE LEFT${mockFile}`)).to.equal(
-  //       'DATA AT THE LEFT'
-  //     );
-  //   });
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(fileDownloader.buffer(`DATA AT THE LEFT${mockFile}`)).to.equal(
+      'DATA AT THE LEFT'
+    );
+  });
 
-  //   it('should return data after an ending marker found', () => {
-  //     const mockFilePart1 = `${FILE_BEGIN}FI`;
-  //     const mockFilePart2 = `LE${FILE_END}`;
+  it('should return data after an ending marker found', () => {
+    const mockFilePart1 = `${FILE_BEGIN}FI`;
+    const mockFilePart2 = `LE${FILE_END}`;
 
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-  //     expect(fileDownloader.buffer(mockFilePart1)).to.equal('');
-  //     expect(fileDownloader.buffer(`${mockFilePart2}DATA AT THE RIGHT`)).to.equal(
-  //       'DATA AT THE RIGHT'
-  //     );
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //     expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
-  //   });
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(fileDownloader.buffer(mockFilePart1)).to.equal('');
+    expect(fileDownloader.buffer(`${mockFilePart2}DATA AT THE RIGHT`)).to.equal(
+      'DATA AT THE RIGHT'
+    );
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
+  });
 
-  //   it('should buffer across incomplete file begin marker sequence on two calls', () => {
-  //     fileDownloader = new FileDownloader('BEGIN', 'END');
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+  it('should buffer across incomplete file begin marker sequence on two calls', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
-  //     expect(fileDownloader.buffer('BEG')).to.equal('');
-  //     expect(fileDownloader.buffer('INFILEEND')).to.equal('');
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //     expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
-  //   });
+    expect(fileDownloader.buffer('BEG')).to.equal('');
+    expect(fileDownloader.buffer('INFILEEND')).to.equal('');
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
+  });
 
-  //   it('should buffer across incomplete file begin marker sequence on n calls', () => {
-  //     fileDownloader = new FileDownloader('BEGIN', 'END');
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+  it('should buffer across incomplete file begin marker sequence on n calls', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
-  //     expect(fileDownloader.buffer('B')).to.equal('');
-  //     expect(fileDownloader.buffer('E')).to.equal('');
-  //     expect(fileDownloader.buffer('G')).to.equal('');
-  //     expect(fileDownloader.buffer('I')).to.equal('');
-  //     expect(fileDownloader.buffer('NFILE' + 'END')).to.equal('');
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //     expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
-  //   });
+    expect(fileDownloader.buffer('B')).to.equal('');
+    expect(fileDownloader.buffer('E')).to.equal('');
+    expect(fileDownloader.buffer('G')).to.equal('');
+    expect(fileDownloader.buffer('I')).to.equal('');
+    expect(fileDownloader.buffer('NFILE' + 'END')).to.equal('');
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
+  });
 
-  //   it('should buffer across incomplete file begin marker sequence with data on the left and right on multiple calls', () => {
-  //     fileDownloader = new FileDownloader('BEGIN', 'END');
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+  it('should buffer across incomplete file begin marker sequence with data on the left and right on multiple calls', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
-  //     expect(fileDownloader.buffer('DATA AT THE LEFT' + 'B')).to.equal(
-  //       'DATA AT THE LEFT'
-  //     );
-  //     expect(fileDownloader.buffer('E')).to.equal('');
-  //     expect(fileDownloader.buffer('G')).to.equal('');
-  //     expect(fileDownloader.buffer('I')).to.equal('');
-  //     expect(fileDownloader.buffer('NFILE' + 'ENDDATA AT THE RIGHT')).to.equal(
-  //       'DATA AT THE RIGHT'
-  //     );
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //     expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
-  //   });
+    expect(fileDownloader.buffer('DATA AT THE LEFT' + 'B')).to.equal(
+      'DATA AT THE LEFT'
+    );
+    expect(fileDownloader.buffer('E')).to.equal('');
+    expect(fileDownloader.buffer('G')).to.equal('');
+    expect(fileDownloader.buffer('I')).to.equal('');
+    expect(fileDownloader.buffer('NFILE' + 'ENDDATA AT THE RIGHT')).to.equal(
+      'DATA AT THE RIGHT'
+    );
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
+  });
 
-  //   it('should buffer across incomplete file begin marker sequence then handle false positive', () => {
-  //     fileDownloader = new FileDownloader('BEGIN', 'END');
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+  it('should buffer across incomplete file begin marker sequence then handle false positive', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
-  //     expect(fileDownloader.buffer('DATA AT THE LEFT' + 'B')).to.equal(
-  //       'DATA AT THE LEFT'
-  //     );
-  //     expect(fileDownloader.buffer('E')).to.equal('');
-  //     expect(fileDownloader.buffer('G')).to.equal('');
-  //     // This isn't part of the file_begin marker and should trigger the partial
-  //     // file begin marker to be returned with the normal data
-  //     expect(fileDownloader.buffer('ZDATA AT THE RIGHT')).to.equal(
-  //       'BEGZDATA AT THE RIGHT'
-  //     );
-  //     expect(onCompleteFileStub.called).to.be.false;
-  //   });
+    expect(fileDownloader.buffer('DATA AT THE LEFT' + 'B')).to.equal(
+      'DATA AT THE LEFT'
+    );
+    expect(fileDownloader.buffer('E')).to.equal('');
+    expect(fileDownloader.buffer('G')).to.equal('');
+    // This isn't part of the file_begin marker and should trigger the partial
+    // file begin marker to be returned with the normal data
+    expect(fileDownloader.buffer('ZDATA AT THE RIGHT')).to.equal(
+      'BEGZDATA AT THE RIGHT'
+    );
+    expect(onCompleteFileStub.called).to.be.false;
+  });
 
-  //   it('should buffer across incomplete file end marker sequence on two calls', () => {
-  //     fileDownloader = new FileDownloader('BEGIN', 'END');
-  //     const mockFilePart1 = 'DATA AT THE LEFTBEGINFILEE';
-  //     const mockFilePart2 = 'NDDATA AT THE RIGHT';
+  it('should buffer across incomplete file end marker sequence on two calls', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const mockFilePart1 = 'DATA AT THE LEFTBEGINFILEE';
+    const mockFilePart2 = 'NDDATA AT THE RIGHT';
 
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
-  //     expect(fileDownloader.buffer(mockFilePart1)).to.equal('DATA AT THE LEFT');
-  //     expect(fileDownloader.buffer(mockFilePart2)).to.equal('DATA AT THE RIGHT');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+    expect(fileDownloader.buffer(mockFilePart1)).to.equal('DATA AT THE LEFT');
+    expect(fileDownloader.buffer(mockFilePart2)).to.equal('DATA AT THE RIGHT');
 
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //     expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
-  //   });
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
+  });
 
-  //   it('should buffer across incomplete file end and file begin marker sequence with data on the left and right on multiple calls', () => {
-  //     fileDownloader = new FileDownloader('BEGIN', 'END');
-  //     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+  it('should buffer across incomplete file end and file begin marker sequence with data on the left and right on multiple calls', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
-  //     expect(fileDownloader.buffer('DATA AT THE LEFT' + 'BE')).to.equal(
-  //       'DATA AT THE LEFT'
-  //     );
-  //     expect(fileDownloader.buffer('G')).to.equal('');
-  //     expect(fileDownloader.buffer('I')).to.equal('');
-  //     expect(fileDownloader.buffer('NFILEE')).to.equal('');
-  //     expect(fileDownloader.buffer('N')).to.equal('');
-  //     expect(fileDownloader.buffer('DDATA AT THE RIGHT')).to.equal(
-  //       'DATA AT THE RIGHT'
-  //     );
-  //     expect(onCompleteFileStub.calledOnce).to.be.true;
-  //     expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
-  //   });
+    expect(fileDownloader.buffer('DATA AT THE LEFT' + 'BE')).to.equal(
+      'DATA AT THE LEFT'
+    );
+    expect(fileDownloader.buffer('G')).to.equal('');
+    expect(fileDownloader.buffer('I')).to.equal('');
+    expect(fileDownloader.buffer('NFILEE')).to.equal('');
+    expect(fileDownloader.buffer('N')).to.equal('');
+    expect(fileDownloader.buffer('DDATA AT THE RIGHT')).to.equal(
+      'DATA AT THE RIGHT'
+    );
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE');
+  });
 
   it('should be able to handle multiple files', () => {
     fileDownloader = new FileDownloader('BEGIN', 'END');
@@ -180,6 +180,23 @@ describe('FileDownloader', () => {
     expect(fileDownloader.buffer('FILE2')).to.equal('');
     expect(fileDownloader.buffer('E')).to.equal('');
     expect(fileDownloader.buffer('NDRIGHT')).to.equal('RIGHT');
+    expect(onCompleteFileStub.calledTwice).to.be.true;
+    expect(onCompleteFileStub.getCall(1).args[0]).to.equal('FILE2');
+  });
+
+  it('should be able to handle multiple files with an ending marker', () => {
+    fileDownloader = new FileDownloader('BEGIN', 'END');
+    const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
+
+    expect(
+      fileDownloader.buffer('DATA AT THE LEFT' + 'BEGIN' + 'FILE1' + 'EN')
+    ).to.equal('DATA AT THE LEFT');
+    expect(
+      fileDownloader.buffer('D' + 'SECOND DATA' + 'BEGIN' + 'FILE2' + 'EN')
+    ).to.equal('SECOND DATA');
+    expect(onCompleteFileStub.calledOnce).to.be.true;
+    expect(onCompleteFileStub.getCall(0).args[0]).to.equal('FILE1');
+    expect(fileDownloader.buffer('D')).to.equal('');
     expect(onCompleteFileStub.calledTwice).to.be.true;
     expect(onCompleteFileStub.getCall(1).args[0]).to.equal('FILE2');
   });
