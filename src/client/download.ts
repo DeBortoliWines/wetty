@@ -7,8 +7,11 @@ const fileBuffer: string[] = [];
 
 export class FileDownloader {
   fileBuffer: string[];
+
   file_begin: string;
+
   file_end: string;
+
   partial_file_begin: string;
 
   constructor(
@@ -88,8 +91,8 @@ export class FileDownloader {
 
     // If we're in the middle of buffering a file...
     else if (this.fileBuffer.length > 0) {
-      let currentBuffer = this.fileBuffer.join('');
-      let potentialFileEndIndexOf = (currentBuffer + data).indexOf(
+      const currentBuffer = this.fileBuffer.join('');
+      const potentialFileEndIndexOf = (currentBuffer + data).indexOf(
         this.file_end
       );
       if (potentialFileEndIndexOf !== -1) {
@@ -119,7 +122,7 @@ export class FileDownloader {
     }
 
     if (checkForMultipleFiles) return this.buffer(remainingCharacters);
-    else return remainingCharacters;
+    return remainingCharacters;
 
     return remainingCharacters;
   }
