@@ -13,6 +13,7 @@ export interface Options {
   title: string;
   command?: string;
   bypasshelmet?: boolean;
+  enablefiledownload?: boolean;
 }
 
 export interface CLI extends Options {

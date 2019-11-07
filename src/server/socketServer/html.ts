@@ -1,6 +1,7 @@
 import * as express from 'express';
+import { Client } from '../interfaces';
 
-export default (base: string, title: string) => (
+export default (base: string, title: string, clientConf: Client) => (
   req: express.Request,
   res: express.Response
 ): express.Response => {
@@ -13,6 +14,9 @@ export default (base: string, title: string) => (
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>${title}</title>
     <link rel="stylesheet" href="${resourcePath}public/index.css" />
+    <script>
+      window.wettyConfig = ${JSON.stringify(clientConf)};
+    </script>
   </head>
   <body>
     <div id="overlay">

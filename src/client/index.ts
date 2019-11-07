@@ -79,63 +79,73 @@ socket.on('connect', () => {
   term.focus();
   mobileKeyboard();
 
-  const fileDownloader = new FileDownloader(function(bufferCharacters: string) {
-    let fileCharacters = bufferCharacters;
-    // Try to decode it as base64, if it fails we assume it's not base64
-    try {
-      fileCharacters = window.atob(fileCharacters);
-    } catch (err) {
-      // Assuming it's not base64...
-    }
-
-    const bytes = new Uint8Array(fileCharacters.length);
-    for (let i = 0; i < fileCharacters.length; i += 1) {
-      bytes[i] = fileCharacters.charCodeAt(i);
-    }
-
-    let mimeType = 'application/octet-stream';
-    let fileExt = '';
-    const typeData = fileType(bytes);
-    if (typeData) {
-      mimeType = typeData.mime;
-      fileExt = typeData.ext;
-    }
-    const fileName = `file-${new Date()
-      .toISOString()
-      .split('.')[0]
-      .replace(/-/g, '')
-      .replace('T', '')
-      .replace(/:/g, '')}${fileExt ? `.${fileExt}` : ''}`;
-
-    const blob = new Blob([new Uint8Array(bytes.buffer)], {
-      type: mimeType,
-    });
-    const blobUrl = URL.createObjectURL(blob);
-
-    Toastify({
-      text: `Download ready: <a href="${blobUrl}" target="_blank" download="${fileName}">${fileName}</a>`,
-      duration: 10000,
-      newWindow: true,
-      gravity: 'bottom',
-      position: 'right',
-      backgroundColor: '#fff',
-      stopOnFocus: true,
-    }).showToast();
-  });
-
   term.on('data', data => {
     socket.emit('input', data);
   });
   term.on('resize', size => {
     socket.emit('resize', size);
   });
-  socket
-    .on('data', (data: string) => {
+
+  if (window.wettyConfig.enablefiledownload) {
+    const fileDownloader = new FileDownloader(function(
+      bufferCharacters: string
+    ) {
+      let fileCharacters = bufferCharacters;
+      // Try to decode it as base64, if it fails we assume it's not base64
+      try {
+        fileCharacters = window.atob(fileCharacters);
+      } catch (err) {
+        // Assuming it's not base64...
+      }
+
+      const bytes = new Uint8Array(fileCharacters.length);
+      for (let i = 0; i < fileCharacters.length; i += 1) {
+        bytes[i] = fileCharacters.charCodeAt(i);
+      }
+
+      let mimeType = 'application/octet-stream';
+      let fileExt = '';
+      const typeData = fileType(bytes);
+      if (typeData) {
+        mimeType = typeData.mime;
+        fileExt = typeData.ext;
+      }
+      const fileName = `file-${new Date()
+        .toISOString()
+        .split('.')[0]
+        .replace(/-/g, '')
+        .replace('T', '')
+        .replace(/:/g, '')}${fileExt ? `.${fileExt}` : ''}`;
+
+      const blob = new Blob([new Uint8Array(bytes.buffer)], {
+        type: mimeType,
+      });
+      const blobUrl = URL.createObjectURL(blob);
+
+      Toastify({
+        text: `Download ready: <a href="${blobUrl}" target="_blank" download="${fileName}">${fileName}</a>`,
+        duration: 10000,
+        newWindow: true,
+        gravity: 'bottom',
+        position: 'right',
+        backgroundColor: '#fff',
+        stopOnFocus: true,
+      }).showToast();
+    });
+
+    socket.on('data', (data: string) => {
       const remainingData = fileDownloader.buffer(data);
       if (remainingData) {
         term.write(remainingData);
       }
-    })
+    });
+  } else {
+    socket.on('data', (data: string) => {
+      term.write(data);
+    });
+  }
+
+  socket
     .on('login', () => {
       term.writeln('');
       resize(term)();

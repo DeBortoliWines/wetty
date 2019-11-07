@@ -6,8 +6,8 @@ import { unWrapArgs } from './parseArgs';
 
 export default function init(opts: CLI): void {
   if (!opts.help) {
-    const { ssh, server, command, ssl } = unWrapArgs(opts);
-    WeTTy(ssh, server, command, ssl).catch(err => {
+    const { ssh, server, client, command, ssl } = unWrapArgs(opts);
+    WeTTy(ssh, server, client, command, ssl).catch(err => {
       logger.error(err);
       process.exitCode = 1;
     });

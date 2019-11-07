@@ -100,6 +100,12 @@ if (require.main === module) {
           type: 'boolean',
           default: false,
         },
+        enablefiledownload: {
+          demand: false,
+          description: 'enable file downloads',
+          type: 'boolean',
+          default: false,
+        },
         help: {
           demand: false,
           alias: 'h',

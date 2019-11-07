@@ -7,6 +7,9 @@ The terminal escape sequences used are `^[[5i` and `^[[4i` (VT100 for "enter
 auto print" and "exit auto print" respectively -
 https://vt100.net/docs/tp83/appendixc.html).
 
+To enable this functionality you'll need to fire up the wetty node server with
+the `--enablefiledownload` argument.
+
 An example of a helper script that prints the terminal escape characters and
 base64s stdin:
 
