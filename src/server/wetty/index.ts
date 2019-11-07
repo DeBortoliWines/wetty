@@ -6,7 +6,7 @@ import server from '../socketServer';
 import getCommand from '../command';
 import { spawn, login } from './term';
 import { logger, loadSSL } from '../utils';
-import { SSL, SSH, SSLBuffer, Server } from '../interfaces';
+import { SSL, SSH, SSLBuffer, Server, Client } from '../interfaces';
 
 /**
  * Starts WeTTy Server
@@ -21,6 +21,9 @@ export default function startWeTTy(
     title: 'WeTTy',
     bypasshelmet: false,
   },
+  clientConf: Client = {
+    enablefiledownload: false,
+  },
   command = '',
   ssl?: SSL
 ): Promise<void> {
@@ -32,8 +35,7 @@ export default function startWeTTy(
 ! will be able to run remote operations without authentication.
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`);
     }
-
-    const io = server(serverConf, sslBuffer);
+    const io = server(serverConf, sslBuffer, clientConf);
     /**
      * Wetty server connected too
      * @fires WeTTy#connnection

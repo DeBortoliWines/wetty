@@ -1,32 +1,38 @@
-// import * as fileType from 'file-type';
-// import Toastify from 'toastify-js';
-
 const DEFAULT_FILE_BEGIN = '\u001b[5i';
 const DEFAULT_FILE_END = '\u001b[4i';
 
 export class FileDownloader {
-  fileBuffer: string[];
-  fileBegin: string;
-  fileEnd: string;
-  partialFileBegin: string;
+  // fileBuffer: string[];
+  // onCompleteFileCallback: any;
+  // fileBegin: string;
+  // fileEnd: string;
+  // partialFileBegin: string;
 
   constructor(
+    onCompleteFileCallback: (file: string) => any,
     fileBegin: string = DEFAULT_FILE_BEGIN,
     fileEnd: string = DEFAULT_FILE_END
   ) {
     this.fileBuffer = [];
+    this.onCompleteFileCallback = onCompleteFileCallback;
     this.fileBegin = fileBegin;
     this.fileEnd = fileEnd;
     this.partialFileBegin = '';
   }
 
   bufferCharacter(character: string): string {
+    // If we are not currently buffering a file.
     if (this.fileBuffer.length === 0) {
+      // If we are not currently expecting the rest of the fileBegin sequences.
       if (this.partialFileBegin.length === 0) {
+        // If the character is the first character of fileBegin we know to start
+        // expecting the rest of the fileBegin sequence.
         if (character === this.fileBegin[0]) {
           this.partialFileBegin = character;
           return '';
-        } else {
+        }
+        // Otherwise, we just return the character for printing to the terminal.
+        else {
           return character;
         }
       }
@@ -35,23 +41,34 @@ export class FileDownloader {
         let nextExpectedCharacter = this.fileBegin[
           this.partialFileBegin.length
         ];
+        // If the next character *is* the next character in the fileBegin sequence.
         if (character === nextExpectedCharacter) {
           this.partialFileBegin += character;
+          // Do we now have the complete fileBegin sequence.
           if (this.partialFileBegin === this.fileBegin) {
             this.partialFileBegin = '';
             this.fileBuffer = this.fileBuffer.concat(this.fileBegin.split(''));
             return '';
-          } else {
+          }
+          // Otherwise, we just wait until the next character.
+          else {
             return '';
           }
-        } else {
+        }
+        // If the next expected character wasn't found for the fileBegin sequence,
+        // we need to return all the data that was bufferd in the partialFileBegin
+        // back to the terminal.
+        else {
           let dataToReturn = this.partialFileBegin + character;
           this.partialFileBegin = '';
           return dataToReturn;
         }
       }
-    } else {
+    }
+    // If we are currently in the state of buffering a file.
+    else {
       this.fileBuffer.push(character);
+      // If we now have an entire fileEnd marker, we have a complete file!
       if (
         this.fileBuffer.length >= this.fileBegin.length + this.fileEnd.length &&
         this.fileBuffer.slice(-this.fileEnd.length).join('') === this.fileEnd
@@ -72,6 +89,15 @@ export class FileDownloader {
   }
 
   buffer(data: string): string {
+    // This is a optimization to quickly return if we know for
+    // sure we don't need to loop over each character.
+    if (
+      this.fileBuffer.length === 0 &&
+      this.partialFileBegin.length === 0 &&
+      data.indexOf(this.fileBegin[0]) === -1
+    ) {
+      return data;
+    }
     let newData = '';
     for (let i = 0; i < data.length; i++) {
       newData += this.bufferCharacter(data[i]);
@@ -79,5 +105,7 @@ export class FileDownloader {
     return newData;
   }
 
-  onCompleteFile(bufferCharacters: string) {}
+  onCompleteFile(bufferCharacters: string) {
+    this.onCompleteFileCallback(bufferCharacters);
+  }
 }

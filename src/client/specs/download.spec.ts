@@ -13,7 +13,7 @@ describe('FileDownloader', () => {
   let fileDownloader: any;
 
   beforeEach(() => {
-    fileDownloader = new FileDownloader(FILE_BEGIN, FILE_END);
+    fileDownloader = new FileDownloader(() => {}, FILE_BEGIN, FILE_END);
   });
 
   afterEach(() => {
@@ -67,7 +67,7 @@ describe('FileDownloader', () => {
   });
 
   it('should buffer across incomplete file begin marker sequence on two calls', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(fileDownloader.buffer('BEG')).to.equal('');
@@ -77,7 +77,7 @@ describe('FileDownloader', () => {
   });
 
   it('should buffer across incomplete file begin marker sequence on n calls', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(fileDownloader.buffer('B')).to.equal('');
@@ -90,7 +90,7 @@ describe('FileDownloader', () => {
   });
 
   it('should buffer across incomplete file begin marker sequence with data on the left and right on multiple calls', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(fileDownloader.buffer('DATA AT THE LEFT' + 'B')).to.equal(
@@ -107,7 +107,7 @@ describe('FileDownloader', () => {
   });
 
   it('should buffer across incomplete file begin marker sequence then handle false positive', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(fileDownloader.buffer('DATA AT THE LEFT' + 'B')).to.equal(
@@ -124,7 +124,7 @@ describe('FileDownloader', () => {
   });
 
   it('should buffer across incomplete file end marker sequence on two calls', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const mockFilePart1 = 'DATA AT THE LEFTBEGINFILEE';
     const mockFilePart2 = 'NDDATA AT THE RIGHT';
 
@@ -137,7 +137,7 @@ describe('FileDownloader', () => {
   });
 
   it('should buffer across incomplete file end and file begin marker sequence with data on the left and right on multiple calls', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(fileDownloader.buffer('DATA AT THE LEFT' + 'BE')).to.equal(
@@ -155,7 +155,7 @@ describe('FileDownloader', () => {
   });
 
   it('should be able to handle multiple files', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(
@@ -174,7 +174,7 @@ describe('FileDownloader', () => {
   });
 
   it('should be able to handle multiple files with an ending marker', () => {
-    fileDownloader = new FileDownloader('BEGIN', 'END');
+    fileDownloader = new FileDownloader(() => {}, 'BEGIN', 'END');
     const onCompleteFileStub = sinon.stub(fileDownloader, 'onCompleteFile');
 
     expect(

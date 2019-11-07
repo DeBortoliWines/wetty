@@ -24,3 +24,7 @@ export interface Server {
   base: string;
   bypasshelmet: boolean;
 }
+
+export interface Client {
+  enablefiledownload: boolean;
+}

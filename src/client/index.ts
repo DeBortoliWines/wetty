@@ -1,19 +1,22 @@
 import { Terminal } from 'xterm';
 import { isNull } from 'lodash';
 
-import { library, dom } from "@fortawesome/fontawesome-svg-core";
-import { faCogs } from "@fortawesome/free-solid-svg-icons/faCogs";
+import { library, dom } from '@fortawesome/fontawesome-svg-core';
+import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
 import { socket } from './socket';
 import { overlay, terminal } from './elements';
-import { processFile } from './download';
+import { FileDownloader } from './download';
 import verifyPrompt from './verify';
 import disconnect from './disconnect';
 import mobileKeyboard from './mobile';
 import resize from './resize';
 import loadOptions from './options';
 import { copySelected, copyShortcut } from './copyToClipboard';
+import * as fileType from 'file-type';
+import Toastify from 'toastify-js';
 import './wetty.scss';
 import './favicon.ico';
+import startWeTTy from '../server/wetty';
 
 // Setup for fontawesome
 library.add(faCogs);
@@ -82,12 +85,66 @@ socket.on('connect', () => {
   term.on('resize', size => {
     socket.emit('resize', size);
   });
-  socket
-    .on('data', (data: string) => {
-      if (!processFile(data)) {
+
+  if (window.wettyConfig.enablefiledownload) {
+    const fileDownloader = new FileDownloader(function(
+      bufferCharacters: string
+    ) {
+      // Try to decode it as base64, if it fails we assume it's not base64
+      try {
+        bufferCharacters = window.atob(bufferCharacters);
+      } catch (err) {
+        // Assuming it's not base64...
+      }
+
+      const bytes = new Uint8Array(bufferCharacters.length);
+      for (let i = 0; i < bufferCharacters.length; i += 1) {
+        bytes[i] = bufferCharacters.charCodeAt(i);
+      }
+
+      let mimeType = 'application/octet-stream';
+      let fileExt = '';
+      const typeData = fileType(bytes);
+      if (typeData) {
+        mimeType = typeData.mime;
+        fileExt = typeData.ext;
+      }
+      const fileName = `file-${new Date()
+        .toISOString()
+        .split('.')[0]
+        .replace(/-/g, '')
+        .replace('T', '')
+        .replace(/:/g, '')}${fileExt ? `.${fileExt}` : ''}`;
+
+      const blob = new Blob([new Uint8Array(bytes.buffer)], {
+        type: mimeType,
+      });
+      const blobUrl = URL.createObjectURL(blob);
+
+      Toastify({
+        text: `Download ready: <a href="${blobUrl}" target="_blank" download="${fileName}">${fileName}</a>`,
+        duration: 10000,
+        newWindow: true,
+        gravity: 'bottom',
+        position: 'right',
+        backgroundColor: '#fff',
+        stopOnFocus: true,
+      }).showToast();
+    });
+
+    socket.on('data', (data: string) => {
+      data = fileDownloader.buffer(data);
+      if (data) {
         term.write(data);
       }
-    })
+    });
+  } else {
+    socket.on('data', (data: string) => {
+      term.write(data);
+    });
+  }
+
+  socket
     .on('login', () => {
       term.writeln('');
       resize(term)();

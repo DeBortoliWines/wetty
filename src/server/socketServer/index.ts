@@ -9,7 +9,7 @@ import * as socket from 'socket.io';
 import { isUndefined } from 'lodash';
 import * as morgan from 'morgan';
 import logger from '../utils/logger';
-import { SSLBuffer, Server } from '../interfaces';
+import { SSLBuffer, Server, Client } from '../interfaces';
 import html from './html';
 
 const distDir = path.join(__dirname, 'client');
@@ -18,7 +18,8 @@ const trim = (str: string): string => str.replace(/\/*$/, '');
 
 export default function createServer(
   { base, port, host, title, bypasshelmet }: Server,
-  { key, cert }: SSLBuffer
+  { key, cert }: SSLBuffer,
+  clientConf: Client
 ): SocketIO.Server {
   const basePath = trim(base);
 
@@ -48,7 +49,7 @@ export default function createServer(
     app.use(helmet());
   }
 
-  const client = html(base, title);
+  const client = html(base, title, clientConf);
   app.get(basePath, client).get(`${basePath}/ssh/:user`, client);
 
   return socket(
