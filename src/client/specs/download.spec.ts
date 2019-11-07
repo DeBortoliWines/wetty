@@ -180,6 +180,7 @@ describe('FileDownloader', () => {
     expect(
       fileDownloader.buffer('DATA AT THE LEFT' + 'BEGIN' + 'FILE1' + 'EN')
     ).to.equal('DATA AT THE LEFT');
+    expect(onCompleteFileStub.calledOnce).to.be.false;
     expect(
       fileDownloader.buffer('D' + 'SECOND DATA' + 'BEGIN' + 'FILE2' + 'EN')
     ).to.equal('SECOND DATA');
