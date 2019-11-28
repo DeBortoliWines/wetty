@@ -2,6 +2,16 @@ const DEFAULT_FILE_BEGIN = '\u001b[5i';
 const DEFAULT_FILE_END = '\u001b[4i';
 
 export class FileDownloader {
+  fileBuffer: string[];
+
+  onCompleteFileCallback: (file: string) => any;
+
+  fileBegin: string;
+
+  fileEnd: string;
+
+  partialFileBegin: string;
+  
   constructor(
     onCompleteFileCallback: (file: string) => any,
     fileBegin: string = DEFAULT_FILE_BEGIN,
