@@ -99,5 +99,11 @@ body {
   .toastify {
     border-radius: 0;
     color: $black;
+    padding: 12px 35px 12px 20px;
+
+    .toast-close {
+      position: absolute;
+      right: 7px;
+    }
   }
 }

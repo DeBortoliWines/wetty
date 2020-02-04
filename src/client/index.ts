@@ -119,12 +119,13 @@ socket.on('connect', () => {
 
     Toastify({
       text: `Download ready: <a href="${blobUrl}" target="_blank" download="${fileName}">${fileName}</a>`,
-      duration: 10000,
+      duration: -1,
       newWindow: true,
       gravity: 'bottom',
       position: 'right',
       backgroundColor: '#fff',
       stopOnFocus: true,
+      close: true
     }).showToast();
   });
 
